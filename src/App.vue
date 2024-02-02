@@ -66,7 +66,7 @@ watch(data, async (newData) => {
 <template>
   <header>
     <div class="wrapper">
-        Filtro: <input v-model="searchFilter"/>
+        Filtro por nombre: <input v-model="searchFilter" placeholder="Escriba al menos 3 letras, para filtrar"/>
         <CharacterDetails
           v-if="selectedCharacter"
           :character="selectedCharacter"

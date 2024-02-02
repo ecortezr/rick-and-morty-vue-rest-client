@@ -27,7 +27,7 @@ describe('CharacterCard', () => {
   
     it('renders properly', () => {
       expect(wrapper).toBeTruthy();
-      expect(wrapper.text()).toContain('Filtro:');
+      expect(wrapper.text()).toContain('Filtro por nombre:');
       expect(wrapper.text()).toMatchSnapshot();
     });
 });  
