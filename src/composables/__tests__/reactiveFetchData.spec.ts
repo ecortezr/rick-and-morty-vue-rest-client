@@ -4,10 +4,10 @@ import { API_URLS, withSetup } from '@/setupTests.js';
 import { useReactiveFetch } from '../reactiveFetchData'
 import type { Page, ICharacter, IEpisode } from '@/types.js';
 import mockCharacters from "@/__tests__/mockCharactersPage.json";
-import mockCharacter from "@/components/__tests__/mockCharacter.json";
+import mockFilteredCharacters from "@/__tests__/mockCharactersFilteredPage.json";
 import mockEpisode from "@/components/__tests__/mockEpisode.json";
 
-describe('useFetch', () => {
+describe('useReactiveFetch', () => {
 
     it('return characters data properly', async () => {
         const [result, app] = withSetup<Page<ICharacter>>(() => useReactiveFetch<Page<ICharacter>>(API_URLS.charactersUrl));
@@ -19,12 +19,12 @@ describe('useFetch', () => {
         app.unmount();
     });
     
-    it('return character data properly', async () => {
-        const [result, app] = withSetup<ICharacter>(() => useReactiveFetch<ICharacter>(API_URLS.characterUrl));
+    it('return filtered characters data properly', async () => {
+        const [result, app] = withSetup<Page<ICharacter>>(() => useReactiveFetch<Page<ICharacter>>(API_URLS.charactersWithFilterUrl));
         
         await flushPromises();
-        
-        expect(result?.data.value).toEqual(mockCharacter);
+
+        expect(result?.data.value).toEqual(mockFilteredCharacters);
         
         app.unmount();
     });

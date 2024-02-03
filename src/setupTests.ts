@@ -2,8 +2,8 @@ import { beforeAll, afterEach, afterAll } from "vitest";
 import { http, HttpResponse, HttpHandler } from "msw";
 import { setupServer } from "msw/node";
 import episodeResponse from "./components/__tests__/mockEpisode.json";
-import characterResponse from "./components/__tests__/mockCharacter.json";
 import charactersResponse from "./__tests__/mockCharactersPage.json";
+import charactersFilteredResponse from "./__tests__/mockCharactersFilteredPage.json";
 import "whatwg-fetch";
 
 import { createApp, type App, type Ref } from 'vue'
@@ -30,16 +30,19 @@ export function withSetup<T>(composable: Function): [ComposableUseFetchReturn<T>
 
 export const API_URLS = {
   charactersUrl: 'https://rickandmortyapi.com/api/character',
-  characterUrl: 'https://rickandmortyapi.com/api/character/232',
+  charactersWithFilterUrl: 'https://rickandmortyapi.com/api/character?name=Morty%20Smith',
   episodeUrl: 'https://rickandmortyapi.com/api/episode/10'
 };
 
 export const restHandlers = [
-  http.get(API_URLS.charactersUrl, () => {
-    return HttpResponse.json(charactersResponse);
-  }),
-  http.get(API_URLS.characterUrl, () => {
-    return HttpResponse.json(characterResponse);
+  http.get(API_URLS.charactersUrl, ({ request }) => {
+
+    const url = new URL(request.url)
+ 
+    const name = url.searchParams.get('name');
+    return (name) 
+      ? HttpResponse.json(charactersFilteredResponse)
+      : HttpResponse.json(charactersResponse);
   }),
   http.get(API_URLS.episodeUrl, () => {
     return HttpResponse.json(episodeResponse);
