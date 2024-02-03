@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import FavoriteIcon from './icons/IconFavorite.vue';
-import FavoriteActiveIcon from './icons/IconFavoriteActive.vue';
 import IconClose from './icons/IconClose.vue';
-import { CharacterCard } from "rick-and-morty-vue-character-card";
+import { CharacterCard, CardInfo, IconFavorite } from "rick-and-morty-vue-character-card";
 import "rick-and-morty-vue-character-card/dist/style.css";
 import { useReactiveFetch } from '@/composables/reactiveFetchData';
-import CardInfo from './CardInfo.vue';
 import type { ICharacter, IEpisode } from '@/types';
 
 const props = defineProps<{
@@ -60,8 +57,7 @@ const episodesData = computed(() => Array.isArray(data.value)
                     <IconClose class="modal__content-icon-close" @click="emit('onClose')"/>
                     <img :src="image" class="modal__content-image" />
                     <div id="favorite-icon-wrapper" class="modal__content-favorite">
-                            <FavoriteActiveIcon id="favorite-icon-on" v-if="isFavorite" />
-                            <FavoriteIcon id="favorite-icon-off" v-else />
+                        <IconFavorite :is-favorite="isFavorite" />
                     </div>
                     <span class="modal__context-text modal__context-text--capitalize">{{ status }}</span>
                     <span class="modal__context-text modal__context-text--20">{{ name }}</span>
