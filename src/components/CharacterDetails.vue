@@ -211,10 +211,6 @@ const { data, error } = useReactiveFetch<IEpisode | IEpisode[]>(episodeUrl);
     cursor: pointer;
 }
 
-.modal__content-icon-close:hover {
-    cursor: pointer;
-}
-
 .modal__content-image {
     width: 140px;
     height: 140px;
@@ -243,7 +239,7 @@ const { data, error } = useReactiveFetch<IEpisode | IEpisode[]>(episodeUrl);
 .modal__context-text--20 {
     font-size: 20px;
     font-weight: 600;
-    padding: 5px 0;
+    padding: 5px 0px;
 }
 
 .modal__context-text--capitalize {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { mount,  DOMWrapper } from '@vue/test-utils';
+import { mount, DOMWrapper } from '@vue/test-utils';
 import CharacterDetails from '../CharacterDetails.vue';
 import type { Page, ICharacter } from '@/types';
 import mockFilteredCharacters from '@/__tests__/mockCharactersFilteredPage.json';
@@ -1801,7 +1801,10 @@ describe('CharacterDetails', () => {
 
   const characterObject = filteredCharacters.results[0];
   const props = {
-    character: characterObject
+    character: {
+      ...characterObject,
+      isFavorite: true
+    }
   };
   const wrapper = mount(CharacterDetails, {
     props,
@@ -1928,6 +1931,12 @@ describe('CharacterDetails', () => {
 
         const contentElem = sections[0];
 
+        it('header render properly', () => {
+          expect(contentElem.text()).toContain(characterObject.name);
+          expect(contentElem.text()).toContain(characterObject.status);
+          expect(contentElem.text()).toContain(characterObject.species);
+        });
+
         it('header style properly', () => {
           const headerCssProps = {
             ...contentCssProps,
@@ -1947,6 +1956,159 @@ describe('CharacterDetails', () => {
           Object.keys(headerCssProps).forEach((key: string) => {
             expect(computedStyle[key as keyof CSSStyleDeclaration])
               .toBe(headerCssProps[key as Keys]);
+          });
+        });
+
+        describe('Icon Close', () => {
+          const iconClose = contentElem.findComponent({ name: 'IconClose' });
+
+          it('icon close element exist', () => {
+            expect(iconClose.exists()).toBe(true);
+          });
+
+          it('icon close render properly', () => {
+            const iconCloseCssProps = {
+              position: 'absolute',
+              top: '15px',
+              right: '15px',
+              cursor: 'pointer'
+            }
+            type Keys = keyof typeof iconCloseCssProps;
+
+            expect(iconClose.classes()).toContain('modal__content-icon-close');
+            const computedStyle = getComputedStyle(iconClose.element);
+
+            Object.keys(iconCloseCssProps).forEach((key: string) => {
+              expect(computedStyle[key as keyof CSSStyleDeclaration])
+                .toBe(iconCloseCssProps[key as Keys]);
+            });
+          });
+
+          it('emit onClose on click', () => {
+            iconClose.trigger('click');
+            const onCloseEvent = wrapper.emitted('onClose');
+
+            expect(onCloseEvent).toHaveLength(1);
+          });
+        });
+
+        describe('Favorite', () => {
+          const imgComp = contentElem.findComponent({ name: 'IconFavorite' });
+
+          it('component exist', () => {
+            expect(imgComp.exists()).toBe(true);
+          });
+
+          it('Favorite component render properly', () => {
+            expect(imgComp.props()).toEqual({ isFavorite: true });
+          });
+        });
+
+        describe('Character Image', () => {
+          const imgComp = contentElem.find('img');
+
+          it('img element exist', () => {
+            expect(imgComp.exists()).toBe(true);
+          });
+
+          it('img render properly', () => {
+            const imgCompCssProps = {
+              width: '140px',
+              height: '140px',
+              'border-radius': '70px',
+              border: '5px solid #fff',
+              margin: '20px',
+            }
+            type Keys = keyof typeof imgCompCssProps;
+
+            expect(imgComp.classes()).toContain('modal__content-image');
+            const computedStyle = getComputedStyle(imgComp.element);
+
+            Object.keys(imgCompCssProps).forEach((key: string) => {
+              expect(computedStyle[key as keyof CSSStyleDeclaration])
+                .toBe(imgCompCssProps[key as Keys]);
+            });
+          });
+        });
+
+        describe('Content texts', () => {
+
+          const contentTexts: DOMWrapper<Element>[] = contentElem.findAll('.modal__context-text');
+          expect(contentTexts).toHaveLength(3);
+
+          describe('Status text', () => {
+            const elemText = contentTexts[0];
+
+            it('render properly', () => {
+              expect(elemText.text()).toContain(characterObject.status);
+            });
+
+            it('render style properly', () => {
+              const cardInfoCssProps = {
+                'text-transform': 'uppercase'
+              }
+              type Keys = keyof typeof cardInfoCssProps;
+
+              expect(elemText.classes()).toContain('modal__context-text');
+              expect(elemText.classes()).toContain('modal__context-text--capitalize');
+              const computedStyle = getComputedStyle(elemText.element);
+
+              Object.keys(cardInfoCssProps).forEach((key: string) => {
+                expect(computedStyle[key as keyof CSSStyleDeclaration])
+                  .toBe(cardInfoCssProps[key as Keys]);
+              });
+            });
+          });
+
+          describe('Name text', () => {
+            const elemText = contentTexts[1];
+
+            it('render properly', () => {
+              expect(elemText.text()).toContain(characterObject.name);
+            });
+
+            it('render style properly', () => {
+              const cardInfoCssProps = {
+                'text-transform': 'capitalize',
+                'font-size': '20px',
+                'font-weight': '600',
+                padding: '5px 0px'
+              }
+              type Keys = keyof typeof cardInfoCssProps;
+
+              expect(elemText.classes()).toContain('modal__context-text');
+              expect(elemText.classes()).toContain('modal__context-text--20');
+              const computedStyle = getComputedStyle(elemText.element);
+
+              Object.keys(cardInfoCssProps).forEach((key: string) => {
+                expect(computedStyle[key as keyof CSSStyleDeclaration])
+                  .toBe(cardInfoCssProps[key as Keys]);
+              });
+            });
+          });
+
+          describe('Specie text', () => {
+            const elemText = contentTexts[2];
+
+            it('render properly', () => {
+              expect(elemText.text()).toContain(characterObject.species);
+            });
+
+            it('render style properly', () => {
+              const cardInfoCssProps = {
+                'text-transform': 'uppercase'
+              }
+              type Keys = keyof typeof cardInfoCssProps;
+
+              expect(elemText.classes()).toContain('modal__context-text');
+              expect(elemText.classes()).toContain('modal__context-text--capitalize');
+              const computedStyle = getComputedStyle(elemText.element);
+
+              Object.keys(cardInfoCssProps).forEach((key: string) => {
+                expect(computedStyle[key as keyof CSSStyleDeclaration])
+                  .toBe(cardInfoCssProps[key as Keys]);
+              });
+            });
           });
         });
       });
@@ -2047,7 +2209,7 @@ describe('CharacterDetails', () => {
       describe('Share Character Section', () => {
 
         const contentElem = sections[4];
-        
+
         it('render properly', () => {
           const shareCharacterButton = contentElem.find('button');
 

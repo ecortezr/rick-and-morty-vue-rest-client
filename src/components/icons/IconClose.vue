@@ -1,4 +1,6 @@
-<!-- This icon is from <https://github.com/Templarian/MaterialDesign>, distributed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0) license-->
+<script setup lang="ts">
+import * as vue from 'vue'
+</script>
 <template>
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
