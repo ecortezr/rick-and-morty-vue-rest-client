@@ -6,6 +6,7 @@ import type { Page, ICharacter, IEpisode } from '@/types.js';
 import mockCharacters from "@/__tests__/mockCharactersPage.json";
 import mockFilteredCharacters from "@/__tests__/mockCharactersFilteredPage.json";
 import mockEpisode from "@/components/__tests__/mockEpisode.json";
+import mockEpisodes from "@/components/__tests__/mockEpisodes.json";
 
 describe('useReactiveFetch', () => {
 
@@ -29,12 +30,22 @@ describe('useReactiveFetch', () => {
         app.unmount();
     });
     
-    it('return episode data properly', async () => {
+    it('return first episode data for a character properly', async () => {
         const [result, app] = withSetup<IEpisode>(() => useReactiveFetch<IEpisode>(API_URLS.episodeUrl));
         
         await flushPromises();
         
         expect(result?.data.value).toEqual(mockEpisode);
+        
+        app.unmount();
+    });
+    
+    it('return episodes data for a character properly', async () => {
+        const [result, app] = withSetup<IEpisode[]>(() => useReactiveFetch<IEpisode[]>(API_URLS.episodesUrl));
+        
+        await flushPromises();
+        
+        expect(result?.data.value).toEqual(mockEpisodes);
         
         app.unmount();
     });

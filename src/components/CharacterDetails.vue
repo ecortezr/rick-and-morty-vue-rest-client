@@ -9,6 +9,7 @@ import type { ICharacter, IEpisode } from '@/types';
 const props = defineProps<{
     character: ICharacter
 }>();
+
 const { character } = props;
 
 const {
@@ -40,20 +41,20 @@ const episodeUrl = computed(() => {
     return `https://rickandmortyapi.com/api/episode/${ids.join(',')}`;
 });
 
-const { data, error } = useReactiveFetch<IEpisode[]>(episodeUrl);
-
-const episodesData = computed(() => Array.isArray(data.value)
-    ? data.value
-    : [data.value]
-);
+const { data, error } = useReactiveFetch<IEpisode | IEpisode[]>(episodeUrl);
 </script>
 <template>
     <Teleport to="body">
-        <div class="modal">
+        <div id="character-modal" class="modal">
             <div v-if="error">Error: {{ error.message }}</div>
             <div v-else-if="!data">Loading...</div>
-            <div v-else class="modal__content">
-                <div class="modal__content-section modal__content-section--header">
+            <div v-else 
+                id="modal-content"
+                class="modal__content">
+                <div
+                    class="modal__content-section modal__content-section--header"
+                    data-test="content-section"
+                    >
                     <IconClose class="modal__content-icon-close" @click="emit('onClose')"/>
                     <img :src="image" class="modal__content-image" />
                     <div id="favorite-icon-wrapper" class="modal__content-favorite">
@@ -63,7 +64,10 @@ const episodesData = computed(() => Array.isArray(data.value)
                     <span class="modal__context-text modal__context-text--20">{{ name }}</span>
                     <span class="modal__context-text modal__context-text--capitalize">{{ species }}</span>
                 </div>
-                <div class="modal__content-section">
+                <div 
+                    class="modal__content-section"
+                    data-test="content-section"
+                    >
                     <span class="modal__context-text modal__context-text--20">Información</span>
                     <div class="modal__content-section modal__content-section--row">
                         <CardInfo
@@ -84,11 +88,14 @@ const episodesData = computed(() => Array.isArray(data.value)
                     </div>
                 </div>
                 <hr class="modal__content-separator"/>
-                <div class="modal__content-section">
+                <div 
+                    class="modal__content-section"
+                    data-test="content-section"
+                    >
                     <span class="modal__context-text modal__context-text--20">Episodios</span>
                     <div class="modal__content-section modal__content-section--row modal__content-section--row-start">
                         <CardInfo 
-                            v-for="({ id, name, episode, air_date }) in episodesData"
+                            v-for="({ id, name, episode, air_date }) in (Array.isArray(data) ? data : [data])"
                             class="modal__content-section--row-items"
                             :label="name"
                             :value="episode"
@@ -100,7 +107,10 @@ const episodesData = computed(() => Array.isArray(data.value)
                     </div>
                 </div>
                 <hr class="modal__content-separator"/>
-                <div class="modal__content-section">
+                <div
+                    class="modal__content-section"
+                    data-test="content-section"
+                    >
                     <span class="modal__context-text modal__context-text--20">Personajes interesantes</span>
                     <div class="modal__content-section modal__content-section--row">
                         <CharacterCard
@@ -113,7 +123,10 @@ const episodesData = computed(() => Array.isArray(data.value)
                             />
                     </div>
                 </div>
-                <div class="modal__content-section">
+                <div
+                    class="modal__content-section"
+                    data-test="content-section"
+                    >
                     <div class="modal__content-section modal__content-section--row modal__content-section--row-end">
                         <button class="modal__content-share-button">
                             Compartir Personaje
@@ -128,7 +141,7 @@ const episodesData = computed(() => Array.isArray(data.value)
 .modal {
     padding: 8px;
     border-radius: 8px;
-    background-color: #FFF;
+    background-color: rgb(255, 255, 255);
     margin-bottom: 1.2em;
     transition: background-color .5s ease;
     position: fixed;
@@ -142,7 +155,7 @@ const episodesData = computed(() => Array.isArray(data.value)
 }
 
 .modal__content {
-    flex: 4 1 0%;
+    flex: 5 1 0%;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -159,7 +172,7 @@ const episodesData = computed(() => Array.isArray(data.value)
 }
 
 .modal__content-separator {
-    color: #e0e0e0;
+    color: rgb(224, 224, 224);
     margin-top: 20px;
 }
 
@@ -168,7 +181,7 @@ const episodesData = computed(() => Array.isArray(data.value)
     justify-content: center;
     padding: 0.5rem;
     align-items: center;
-    background-color: #ccc;
+    background-color: rgb(204, 204, 204);
 }
 
 .modal__content-section--row {
@@ -240,8 +253,8 @@ const episodesData = computed(() => Array.isArray(data.value)
 .modal__content-share-button {
     margin: 20px;
     padding: 10px 20px;
-    background-color: #11555F;
-    color: #FFFFFF;
+    background-color: rgb(17, 85, 95);
+    color: rgb(255, 255, 255);
     font-size: 18px;
     font-weight: 700;
     border: none;
