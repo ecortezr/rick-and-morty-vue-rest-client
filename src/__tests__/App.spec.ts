@@ -1,7 +1,9 @@
-import { nextTick, defineComponent } from 'vue';
-import { describe, it, expect, vi } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import App from '../App.vue'
+import { nextTick, type Ref } from 'vue';
+import { describe, it, expect, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import App from '../App.vue';
+import { useReactiveFetch } from '@/composables/reactiveFetchData';
+import type { Page, ICharacterApi } from '@/types';
 
 const mock = vi.hoisted(() => {
   const firstEpisodeName = 'Close Rick-counters of the Rick Kind';
@@ -681,17 +683,151 @@ const mock = vi.hoisted(() => {
       locationName: obj.location.name
     }))
   };
+  const mockedCharactersFilteredPage = {
+    info: {
+      count: 826,
+      pages: 42,
+      next: "https://rickandmortyapi.com/api/character?page=2",
+      prev: null
+    },
+    results: [
+      {
+        id: 2,
+        name: "Morty Smith",
+        status: "Alive",
+        species: "Human",
+        type: "",
+        gender: "Male",
+        origin: {
+          name: "unknown",
+          url: ""
+        },
+        location: {
+          name: "Citadel of Ricks",
+          url: "https://rickandmortyapi.com/api/location/3"
+        },
+        image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
+        episode: [
+          "https://rickandmortyapi.com/api/episode/1",
+          "https://rickandmortyapi.com/api/episode/2",
+          "https://rickandmortyapi.com/api/episode/3",
+          "https://rickandmortyapi.com/api/episode/4",
+          "https://rickandmortyapi.com/api/episode/5",
+          "https://rickandmortyapi.com/api/episode/6",
+          "https://rickandmortyapi.com/api/episode/7",
+          "https://rickandmortyapi.com/api/episode/8",
+          "https://rickandmortyapi.com/api/episode/9",
+          "https://rickandmortyapi.com/api/episode/10",
+          "https://rickandmortyapi.com/api/episode/11",
+          "https://rickandmortyapi.com/api/episode/12",
+          "https://rickandmortyapi.com/api/episode/13",
+          "https://rickandmortyapi.com/api/episode/14",
+          "https://rickandmortyapi.com/api/episode/15",
+          "https://rickandmortyapi.com/api/episode/16",
+          "https://rickandmortyapi.com/api/episode/17",
+          "https://rickandmortyapi.com/api/episode/18",
+          "https://rickandmortyapi.com/api/episode/19",
+          "https://rickandmortyapi.com/api/episode/20",
+          "https://rickandmortyapi.com/api/episode/21",
+          "https://rickandmortyapi.com/api/episode/22",
+          "https://rickandmortyapi.com/api/episode/23",
+          "https://rickandmortyapi.com/api/episode/24",
+          "https://rickandmortyapi.com/api/episode/25",
+          "https://rickandmortyapi.com/api/episode/26",
+          "https://rickandmortyapi.com/api/episode/27",
+          "https://rickandmortyapi.com/api/episode/28",
+          "https://rickandmortyapi.com/api/episode/29",
+          "https://rickandmortyapi.com/api/episode/30",
+          "https://rickandmortyapi.com/api/episode/31",
+          "https://rickandmortyapi.com/api/episode/32",
+          "https://rickandmortyapi.com/api/episode/33",
+          "https://rickandmortyapi.com/api/episode/34",
+          "https://rickandmortyapi.com/api/episode/35",
+          "https://rickandmortyapi.com/api/episode/36",
+          "https://rickandmortyapi.com/api/episode/37",
+          "https://rickandmortyapi.com/api/episode/38",
+          "https://rickandmortyapi.com/api/episode/39",
+          "https://rickandmortyapi.com/api/episode/40",
+          "https://rickandmortyapi.com/api/episode/41",
+          "https://rickandmortyapi.com/api/episode/42",
+          "https://rickandmortyapi.com/api/episode/43",
+          "https://rickandmortyapi.com/api/episode/44",
+          "https://rickandmortyapi.com/api/episode/45",
+          "https://rickandmortyapi.com/api/episode/46",
+          "https://rickandmortyapi.com/api/episode/47",
+          "https://rickandmortyapi.com/api/episode/48",
+          "https://rickandmortyapi.com/api/episode/49",
+          "https://rickandmortyapi.com/api/episode/50",
+          "https://rickandmortyapi.com/api/episode/51"
+        ],
+        url: "https://rickandmortyapi.com/api/character/2",
+        created: "2017-11-04T18:50:21.651Z"
+      },
+      {
+        id: 232,
+        name: "Morty Smith",
+        status: "Alive",
+        species: "Human",
+        type: "",
+        gender: "Male",
+        origin: {
+          name: "Earth (Evil Rick's Target Dimension)",
+          url: "https://rickandmortyapi.com/api/location/34"
+        },
+        location: {
+          name: "Earth (Evil Rick's Target Dimension)",
+          url: "https://rickandmortyapi.com/api/location/34"
+        },
+        image: "https://rickandmortyapi.com/api/character/avatar/232.jpeg",
+        episode: [
+          "https://rickandmortyapi.com/api/episode/10"
+        ],
+        url: "https://rickandmortyapi.com/api/character/232",
+        created: "2017-12-30T16:29:27.863Z"
+      },
+      {
+        id: 234,
+        name: "Morty Smith",
+        status: "Dead",
+        species: "Human",
+        type: "",
+        gender: "Male",
+        origin: {
+          name: "Earth (Replacement Dimension)",
+          url: "https://rickandmortyapi.com/api/location/20"
+        },
+        location: {
+          name: "Earth (Replacement Dimension)",
+          url: "https://rickandmortyapi.com/api/location/20"
+        },
+        image: "https://rickandmortyapi.com/api/character/avatar/234.jpeg",
+        episode: [
+          "https://rickandmortyapi.com/api/episode/6"
+        ],
+        url: "https://rickandmortyapi.com/api/character/234",
+        created: "2017-12-30T16:35:01.223Z"
+      }
+    ].map((obj) => ({
+      ...obj,
+      firstEpisodeName,
+      locationName: obj.location.name
+    }))
+  };
   return {
-    composable: vi.fn().mockReturnValue({
+    composablePage: vi.fn().mockReturnValue({
       data: mockedCharactersFirstPage
     }),
+    composableFilter: vi.fn().mockReturnValue({
+      data: mockedCharactersFilteredPage
+    }),
     episodeName: vi.fn().mockImplementation(() => Promise.resolve(firstEpisodeName)),
-    mockedCharactersFirstPage
+    mockedCharactersFirstPage,
+    mockedCharactersFilteredPage
   };
 });
 
 vi.mock('@/composables/reactiveFetchData', () => ({
-  useReactiveFetch: mock.composable
+  useReactiveFetch: mock.composablePage
 }));
 
 vi.mock('@/episodeUtils', () => ({
@@ -700,55 +836,93 @@ vi.mock('@/episodeUtils', () => ({
 
 describe('App', () => {
 
-  let wrapper = mount(App);
+  describe('App First Page', () => {
 
-  it('renders properly', () => {
-    expect(wrapper).toBeTruthy();
-    expect(wrapper.text()).toContain('Filtro por nombre:');
-    expect(wrapper.text()).toMatchSnapshot();
-  });
+    const wrapper = mount(App);
 
-  it('render card styles properly', () => {
-    const cardsWrapper = wrapper.findAll('.card__container');
+    it('renders properly', () => {
+      expect(wrapper).toBeTruthy();
+      expect(wrapper.text()).toContain('Filtro por nombre:');
+      expect(wrapper.text()).toMatchSnapshot();
+    });
 
-    expect(cardsWrapper).toHaveLength(mock.mockedCharactersFirstPage.results.length);
+    it('render card styles properly', () => {
+      const cardsWrapper = wrapper.findAll('.card__container');
 
-    cardsWrapper.forEach(async (card) => {
-      await card.trigger('mouseover');
-      await nextTick();
+      expect(cardsWrapper).toHaveLength(mock.mockedCharactersFirstPage.results.length);
 
-      const computedStyle = getComputedStyle(card.element);
+      cardsWrapper.forEach(async (card) => {
+        await card.trigger('mouseover');
+        await nextTick();
 
-      expect(computedStyle.filter).toBe('drop-shadow(0 0 2em #61dafbaa)');
-      expect(computedStyle.cursor).toBe('pointer');
+        const computedStyle = getComputedStyle(card.element);
+
+        expect(computedStyle.filter).toBe('drop-shadow(0 0 2em #61dafbaa)');
+        expect(computedStyle.cursor).toBe('pointer');
+      });
+    });
+
+    it('render cards properly', () => {
+      const cards = wrapper.findAllComponents({ name: 'CharacterCard' });
+
+      expect(cards).toHaveLength(mock.mockedCharactersFirstPage.results.length);
+      for (let i = 0; i < cards.length; i++) {
+        const { location, ...others } = mock.mockedCharactersFirstPage.results[i];
+        const { isFavorite } = cards[i].props();
+        expect(cards[i].props()).toEqual({
+          characterData: { ...others, isFavorite },
+          maxWidth: '326px',
+          bgColor: '#FFF',
+          isFavorite
+        })
+      }
+    });
+
+    it('card emit right event on click', () => {
+      const wrapper = mount(App, { attachTo: 'body' });
+      const cards = wrapper.findAllComponents({ name: 'CharacterCard' });
+
+      cards.forEach(async (card) => {
+        await card.trigger('click');
+        await nextTick();
+
+        expect(wrapper.findComponent({ name: 'CharacterDetails' }).isVisible()).toBe(true);
+      });
     });
   });
 
-  it('render cards properly', () => {
-    const cards = wrapper.findAllComponents({ name: 'CharacterCard' });
+  describe('App Filter Page', () => {
 
-    expect(cards).toHaveLength(mock.mockedCharactersFirstPage.results.length);
-    for (let i = 0; i < cards.length; i++) {
-      const { location, ...others } = mock.mockedCharactersFirstPage.results[i];
-      const { isFavorite, ...othersProps } = cards[i].props();
-      expect(cards[i].props()).toEqual({
-        characterData: { ...others, isFavorite},
-        maxWidth: '326px',
-        bgColor: '#FFF',
-        isFavorite
-      })
-    }
-  });
+    vi.mocked(useReactiveFetch<Page<ICharacterApi>>).mockReturnValue({
+      data: mock.mockedCharactersFilteredPage as unknown as Ref<Page<ICharacterApi> | undefined>,
+      error: null as unknown as Ref<any>
+    });
+    const wrapper = mount(App);
 
-  it('card emit right event on click', () => {
-    wrapper = mount(App, { attachTo: 'body'});
-    const cards = wrapper.findAllComponents({ name: 'CharacterCard' });
+    it('set filter properly', async () => {
+      const input = wrapper.find('input');
+      const filterValue = 'Morty Smith';
 
-    cards.forEach(async (card) => {
-      await card.trigger('click');
+      await input.setValue(filterValue);
       await nextTick();
 
-      expect(wrapper.findComponent({ name: 'CharacterDetails'}).isVisible()).toBe(true);
+      expect(input.element.value).toBe(filterValue);
+      expect(wrapper.findAllComponents({ name: 'CharacterCard' })).toHaveLength(mock.mockedCharactersFilteredPage.results.length);
+    });
+
+    it('render cards properly after filter', () => {
+      const cards = wrapper.findAllComponents({ name: 'CharacterCard' });
+
+      for (let i = 0; i < cards.length; i++) {
+        const { location, ...others } = mock.mockedCharactersFilteredPage.results[i];
+        const { isFavorite } = cards[i].props();
+        expect(cards[i].props()).toEqual({
+          characterData: { ...others, isFavorite },
+          maxWidth: '326px',
+          bgColor: '#FFF',
+          isFavorite
+        })
+      }
     });
   });
-});  
+});

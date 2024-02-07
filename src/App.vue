@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch, watchEffect, nextTick, toValue } from "vue";
+import { ref, computed, watch, toValue } from "vue";
 import { CharacterCard } from "rick-and-morty-vue-character-card";
 import "rick-and-morty-vue-character-card/dist/style.css";
 import CharacterDetails from './components/CharacterDetails.vue'
 import { useReactiveFetch } from '@/composables/reactiveFetchData';
-import type { Page, ICharacterApi, IEpisode, ICharacter } from './types';
+import type { Page, ICharacterApi, ICharacter } from './types';
 import { getEpisodeName } from './episodeUtils';
 
 const searchFilter = ref('');
